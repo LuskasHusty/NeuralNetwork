@@ -38,7 +38,6 @@ NetworkLayer::NetworkLayer(int Inputs, int Outputs, Functions Activation, Functi
     cost = Cost;
 
     WeightedInputs = (double *) malloc(numOutputs*sizeof(double));
-    Output = (double *) malloc(numOutputs*sizeof(double));
 
     derivativeValues = (double *) malloc(sizeof(double)*numOutputs);
 }
@@ -46,7 +45,6 @@ NetworkLayer::NetworkLayer(int Inputs, int Outputs, Functions Activation, Functi
 NetworkLayer::~NetworkLayer()
 {
     free(nodes);
-    free(Output);
     free(WeightedInputs);
 
     for(int i = 0; i < numOutputs; i++)
@@ -67,7 +65,8 @@ NetworkLayer::~NetworkLayer()
 
 double *NetworkLayer::EvalOutput(double *Inputs)
 {
-    Input = Inputs;
+    double *Output = (double *) malloc(sizeof(double)*numOutputs); 
+
     for(int i = 0; i < numOutputs; i++)
     {
         WeightedInputs[i] = nodes[i].Bias;
@@ -121,25 +120,25 @@ void NetworkLayer::ApplyCost(double learnRate, double momentum, double regulariz
     }
 }
 
-double *NetworkLayer::DerivativeNodeValues(double *expected)
+double *NetworkLayer::DerivativeNodeValues(double *expected, double *output)
 {
     for(int i = 0; i < numOutputs; i++)
     {
-        double errorDerivative = cost.Derivative(Output[i], expected[i]);
+        double errorDerivative = cost.Derivative(output[i], expected[i]);
         double activationDerivative = activation.Derivative(WeightedInputs[i]);
         derivativeValues[i] = activationDerivative * errorDerivative;
     }
     return derivativeValues;
 }
 
-void NetworkLayer::UpdateDerivatives(double *DerivativeValues)
+void NetworkLayer::UpdateDerivatives(double *DerivativeValues, double *input)
 {
     std::unique_lock<std::mutex> wLock(WeightGuard);
     for(int i = 0; i < numOutputs; i++)
     {
         for(int j = 0; j < numInputs; j++)
         {
-            errorDerivativesG[i][j] += Input[j]*DerivativeValues[i];
+            errorDerivativesG[i][j] += input[j]*DerivativeValues[i];
         }
     }
     wLock.unlock();

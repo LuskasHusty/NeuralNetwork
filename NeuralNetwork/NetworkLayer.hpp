@@ -25,8 +25,8 @@ class NetworkLayer
         void Learn(double learnRate);
         void ApplyCost(double learnRate, double momentum, double regularization);
         double CostGradient(int nodeIndex);
-        double *DerivativeNodeValues(double *expected);
-        void UpdateDerivatives(double *derivativeValues);
+        double *DerivativeNodeValues(double *expected, double *output);
+        void UpdateDerivatives(double *derivativeValues, double *input);
         double *HiddenLayerDerivativeNodeValues(NetworkNode *NextLayerNodes, double *NextLayerDerivativeNodeValues, int NextLayerSize);
         void ClearDerivativesG();
 
@@ -41,8 +41,6 @@ class NetworkLayer
         int numOutputs;
         int numInputs;
 
-        double *Output;
-        double *Input; // Pointer of the previous Layers Output
         double *WeightedInputs;
         Functions activation;
         Function2D cost;
