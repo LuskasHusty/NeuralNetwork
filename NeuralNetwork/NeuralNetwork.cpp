@@ -167,5 +167,23 @@ double NeuralNetwork::TotalError(Dataset trainingData)
     return error/trainingData.size;
 }
 
+NetworkNode **NeuralNetwork::GetNetwork()
+{
+    NetworkNode **netNodes = (NetworkNode **) malloc(sizeof(NetworkNode)*(settings.NumberOfLayers - 1));
+    for(int i = 1; i < settings.NumberOfLayers; i++)
+    {
+        netNodes[i - 1] = Layers[i]->GetNodes();
+    }
+    return netNodes;
+}
+
+void NeuralNetwork::SetNetwork(NetworkNode **Nodes)
+{
+    for(int i = 1; i < settings.NumberOfLayers; i++)
+    {
+        Layers[i]->SetNodes(Nodes[i - 1]);
+    }
+}
+
 
 #endif

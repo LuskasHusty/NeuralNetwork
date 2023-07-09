@@ -19,6 +19,9 @@ class NeuralNetwork
         void UpdateDerivatives(double learnRate);
         void ClearAllDerivativesG();
         double TotalError(Dataset trainingData);
+
+        NetworkNode **GetNetwork();
+        void SetNetwork(NetworkNode **Nodes);
         
     private:
         void LearnThread(Dataset *trainingData);

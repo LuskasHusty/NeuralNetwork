@@ -29,7 +29,9 @@ class NetworkLayer
         void UpdateDerivatives(double *derivativeValues);
         double *HiddenLayerDerivativeNodeValues(NetworkNode *NextLayerNodes, double *NextLayerDerivativeNodeValues, int NextLayerSize);
         void ClearDerivativesG();
+
         NetworkNode *GetNodes();
+        void SetNodes(NetworkNode *Nodes);
     private:
 
         //double nodeError(double output, double expected);

@@ -154,6 +154,19 @@ NetworkNode *NetworkLayer::GetNodes()
     return nodes;
 }
 
+void NetworkLayer::SetNodes(NetworkNode *Nodes)
+{
+    for(int i = 0; i < numOutputs; i++)
+    {
+        nodes[i].Bias =  Nodes[i].Bias;
+        
+        for(int j = 0; j < numInputs; j++)
+        {
+            nodes[i].Weight[j] = Nodes[i].Weight[j];
+        }
+    }
+}
+
 void NetworkLayer::ClearDerivativesG()
 {
     for(int i = 0; i < numOutputs; i++)
