@@ -45,7 +45,6 @@ struct NetworkSettings
 
     double LearnRate;
 
-    /* Not Yet Implemented*/
     double Momentum;
     double BatchSize;
     double Regularization;
