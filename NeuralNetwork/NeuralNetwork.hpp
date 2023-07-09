@@ -4,6 +4,9 @@
 #include "NetworkSettings.hpp"
 #include "NetworkLayer.hpp"
 
+#include <stdlib.h>
+#include <thread>
+
 class NeuralNetwork
 {
     public:

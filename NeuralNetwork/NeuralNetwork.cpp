@@ -1,9 +1,6 @@
 #ifndef NEURALNETWORK_CPP
 #define NEURALNETWORK_CPP
 
-#include <stdlib.h>
-#include <iostream>
-#include <thread>
 #include "NeuralNetwork.hpp"
 
 NeuralNetwork::NeuralNetwork(NetworkSettings Settings)
