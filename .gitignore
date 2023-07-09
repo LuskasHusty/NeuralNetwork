@@ -1,4 +1,5 @@
 DataSet/
+Networks/
 *.exe
 .vscode
 Tester.cpp
