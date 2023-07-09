@@ -17,11 +17,13 @@ NetworkLayer::NetworkLayer(int Inputs, int Outputs, Functions Activation, Functi
     for(int i = 0; i < numOutputs; i++)
     {
         errorDerivativesG[i] = (double *) malloc(numInputs*sizeof(double));
+        biasDerivativesG[i] = 0;
 
         nodes[i].Bias = 0.0;
         nodes[i].Weight = (double *) malloc(numInputs*sizeof(double));
         for(int j = 0; j < numInputs; j++)
         {
+            errorDerivativesG[i][j] = 0;
             nodes[i].Weight[j] = (double)((rand() % 3) - 1)/sqrt(numInputs);
         }
     }
@@ -61,11 +63,6 @@ double *NetworkLayer::EvalOutput(double *Inputs)
 
         //Calculate Activations
         Output[i] = activation.Function(WeightedInputs[i]);
-        
-        if(std::isnan(Output[i]))
-        {
-            Output[i] = 0;
-        }
         //std::cout << Output[i] << '\n';
     }
 
@@ -87,19 +84,17 @@ void NetworkLayer::ApplyCost(double learnRate)
     for(int i = 0; i < numOutputs; i++)
     {
         nodes[i].Bias -=  biasDerivativesG[i] * learnRate;
-        if(std::isnan(nodes[i].Bias))
-        {
-            nodes[i].Bias = 0;
-        }
         
         for(int j = 0; j < numInputs; j++)
         {
             nodes[i].Weight[j] -= errorDerivativesG[i][j] * learnRate;
-            if(std::isnan(nodes[i].Weight[j]))
-            {
-                nodes[i].Weight[j] = 0;
-            }
+
+            //Clear Derivatives
+            errorDerivativesG[i][j] = 0;
         }
+        
+        //Clear Derivatives
+        biasDerivativesG[i] = 0;
     }
 }
 
