@@ -178,6 +178,7 @@ double NeuralNetwork::TotalError(Dataset trainingData)
     {
         output = Eval(trainingData.Inputs[i]);
         error += Layers[lastLayer]->Error(output, trainingData.ExpectedOutputs[i]);
+        free(output);
     }
     return error/trainingData.size;
 }
