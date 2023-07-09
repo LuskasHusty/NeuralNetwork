@@ -1,0 +1,4 @@
+DataSet/
+*.exe
+.vscode
+Tester.cpp
