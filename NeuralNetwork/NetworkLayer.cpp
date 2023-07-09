@@ -116,15 +116,22 @@ double *NetworkLayer::DerivativeNodeValues(double *expected)
 
 void NetworkLayer::UpdateDerivatives(double *DerivativeValues)
 {
+    std::unique_lock<std::mutex> wLock(WeightGuard);
     for(int i = 0; i < numOutputs; i++)
     {
         for(int j = 0; j < numInputs; j++)
         {
             errorDerivativesG[i][j] += Input[j]*DerivativeValues[i];
         }
+    }
+    wLock.unlock();
 
+    std::unique_lock<std::mutex> bLock(BiasGuard);
+    for(int i = 0; i < numOutputs; i++)
+    {
         biasDerivativesG[i] += 1 * DerivativeValues[i];
     }
+    bLock.unlock();
 }   
 
 double *NetworkLayer::HiddenLayerDerivativeNodeValues(NetworkNode *NextLayerNodes, double *NextLayerDerivativeNodeValues, int NextLayerSize)
