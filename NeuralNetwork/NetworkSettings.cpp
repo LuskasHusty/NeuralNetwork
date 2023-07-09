@@ -2,7 +2,6 @@
 #define NETWORKSETTINGS_CPP
 
 #include "NetworkSettings.hpp"
-#include "math.h"
 
 double Default_ActivationSigmoid(double x)
 {

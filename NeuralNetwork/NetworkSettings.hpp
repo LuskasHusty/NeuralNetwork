@@ -1,6 +1,8 @@
 #ifndef NETWORKSETTINGS_HPP
 #define NETWORKSETTINGS_HPP
 
+#include "math.h"
+
 double Default_ActivationSigmoid(double x);
 double Default_ActivationSigmoidDerivative(double x);
 
