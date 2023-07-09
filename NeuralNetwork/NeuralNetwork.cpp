@@ -141,7 +141,7 @@ void NeuralNetwork::UpdateDerivatives(double learnRate)
 {
     for(int i = 1; i < settings.NumberOfLayers; i++)
     {
-        Layers[i]->ApplyCost(learnRate);
+        Layers[i]->ApplyCost(learnRate, settings.Momentum);
     }
 }
 

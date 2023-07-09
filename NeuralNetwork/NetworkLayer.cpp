@@ -13,16 +13,22 @@ NetworkLayer::NetworkLayer(int Inputs, int Outputs, Functions Activation, Functi
     errorDerivativesG = (double **) malloc(numOutputs*sizeof(double *));
     biasDerivativesG = (double *) malloc(numOutputs*sizeof(double));
 
+    bVels = (double *) malloc(numOutputs*sizeof(double));
+    wVels = (double **) malloc(numOutputs*sizeof(double *));
+
     nodes = (NetworkNode *) malloc(numOutputs*sizeof(NetworkNode));
     for(int i = 0; i < numOutputs; i++)
     {
         errorDerivativesG[i] = (double *) malloc(numInputs*sizeof(double));
+        wVels[i] = (double *) malloc(numInputs*sizeof(double));
         biasDerivativesG[i] = 0;
+        bVels[i] = 0;
 
         nodes[i].Bias = 0.0;
         nodes[i].Weight = (double *) malloc(numInputs*sizeof(double));
         for(int j = 0; j < numInputs; j++)
         {
+            wVels[i][j] = 0;
             errorDerivativesG[i][j] = 0;
             nodes[i].Weight[j] = (double)((rand() % 3) - 1)/sqrt(numInputs);
         }
@@ -42,6 +48,16 @@ NetworkLayer::~NetworkLayer()
     free(nodes);
     free(Output);
     free(WeightedInputs);
+
+    for(int i = 0; i < numOutputs; i++)
+    {
+        free(wVels[i]);
+        free(errorDerivativesG[i]);
+        free(nodes[i].Weight);
+    }
+
+    free(wVels);
+    free(bVels);
 
     free(errorDerivativesG);
     free(biasDerivativesG);
@@ -79,20 +95,26 @@ double NetworkLayer::Error(double *output, double *expected)
     return error;
 }
 
-void NetworkLayer::ApplyCost(double learnRate)
+void NetworkLayer::ApplyCost(double learnRate, double momentum)
 {
     for(int i = 0; i < numOutputs; i++)
     {
-        nodes[i].Bias -=  biasDerivativesG[i] * learnRate;
+        double bVel = (bVels[i]*momentum) - (biasDerivativesG[i] * learnRate);
+        bVels[i] = bVel;
+        nodes[i].Bias += bVel;
+        //nodes[i].Bias -=  biasDerivativesG[i] * learnRate;
         
         for(int j = 0; j < numInputs; j++)
         {
-            nodes[i].Weight[j] -= errorDerivativesG[i][j] * learnRate;
+            double wVel = (wVels[i][j]*momentum) - (errorDerivativesG[i][j] * learnRate);
+            wVels[i][j] = wVel;
+            nodes[i].Weight[j] += wVel;
+            //nodes[i].Weight[j] -= errorDerivativesG[i][j] * learnRate;
 
             //Clear Derivatives
             errorDerivativesG[i][j] = 0;
         }
-        
+
         //Clear Derivatives
         biasDerivativesG[i] = 0;
     }

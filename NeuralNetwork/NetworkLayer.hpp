@@ -23,7 +23,7 @@ class NetworkLayer
         double *EvalOutput(double *Inputs);
         double Error(double *output, double *expected);
         void Learn(double learnRate);
-        void ApplyCost(double learnRate);
+        void ApplyCost(double learnRate, double momentum);
         double CostGradient(int nodeIndex);
         double *DerivativeNodeValues(double *expected);
         void UpdateDerivatives(double *derivativeValues);
@@ -54,6 +54,9 @@ class NetworkLayer
 
         std::mutex BiasGuard;
         std::mutex WeightGuard;
+
+        double *bVels;
+        double **wVels;
 };
 
 #endif
