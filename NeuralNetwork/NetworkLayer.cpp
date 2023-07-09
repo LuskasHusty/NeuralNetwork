@@ -95,8 +95,9 @@ double NetworkLayer::Error(double *output, double *expected)
     return error;
 }
 
-void NetworkLayer::ApplyCost(double learnRate, double momentum)
+void NetworkLayer::ApplyCost(double learnRate, double momentum, double regularization)
 {
+    double wDecay = (1 - (regularization * learnRate));
     for(int i = 0; i < numOutputs; i++)
     {
         double bVel = (bVels[i]*momentum) - (biasDerivativesG[i] * learnRate);
@@ -108,7 +109,7 @@ void NetworkLayer::ApplyCost(double learnRate, double momentum)
         {
             double wVel = (wVels[i][j]*momentum) - (errorDerivativesG[i][j] * learnRate);
             wVels[i][j] = wVel;
-            nodes[i].Weight[j] += wVel;
+            nodes[i].Weight[j] = (nodes[i].Weight[j] * wDecay) + wVel;
             //nodes[i].Weight[j] -= errorDerivativesG[i][j] * learnRate;
 
             //Clear Derivatives

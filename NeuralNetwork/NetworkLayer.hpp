@@ -23,7 +23,7 @@ class NetworkLayer
         double *EvalOutput(double *Inputs);
         double Error(double *output, double *expected);
         void Learn(double learnRate);
-        void ApplyCost(double learnRate, double momentum);
+        void ApplyCost(double learnRate, double momentum, double regularization);
         double CostGradient(int nodeIndex);
         double *DerivativeNodeValues(double *expected);
         void UpdateDerivatives(double *derivativeValues);
