@@ -21,13 +21,14 @@ class NetworkLayer
         NetworkLayer(int Inputs, int Outputs, Functions Activation, Function2D Cost);
         ~NetworkLayer();
         double *EvalOutput(double *Inputs);
+        double *EvalOutput(double *Inputs, double *WeightedInputs);
         double Error(double *output, double *expected);
         void Learn(double learnRate);
         void ApplyCost(double learnRate, double momentum, double regularization);
         double CostGradient(int nodeIndex);
-        double *DerivativeNodeValues(double *expected, double *output);
+        double *DerivativeNodeValues(double *expected, double *output, double *WeightedInputs);
+        double *HiddenLayerDerivativeNodeValues(NetworkNode *NextLayerNodes, double *NextLayerDerivativeNodeValues, int NextLayerSize, double *WeightedInputs);
         void UpdateDerivatives(double *derivativeValues, double *input);
-        double *HiddenLayerDerivativeNodeValues(NetworkNode *NextLayerNodes, double *NextLayerDerivativeNodeValues, int NextLayerSize);
         void ClearDerivativesG();
 
         NetworkNode *GetNodes();
@@ -41,7 +42,6 @@ class NetworkLayer
         int numOutputs;
         int numInputs;
 
-        double *WeightedInputs;
         Functions activation;
         Function2D cost;
 

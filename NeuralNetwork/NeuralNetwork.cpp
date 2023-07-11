@@ -30,42 +30,50 @@ NeuralNetwork::~NeuralNetwork()
 double *NeuralNetwork::Eval(double *Inputs)
 {
     double **outputs = (double **) malloc(sizeof(double*)*settings.NumberOfLayers);
+    outputs[0] = Inputs;
     for(int i = 1; i < settings.NumberOfLayers; i++)
     {
-        outputs[i] = Layers[i]->EvalOutput(Inputs);
-        Inputs = outputs[i];
+        outputs[i] = Layers[i]->EvalOutput(outputs[i - 1]);
     }
-    for(int i = 0; i < settings.NumberOfLayers - 1; i++)
+
+    for(int i = 1; i < settings.NumberOfLayers - 1; i++)
     {
         free(outputs[i]);
     }
-    return outputs[settings.NumberOfLayers - 1];
+    double *out = outputs[settings.NumberOfLayers - 1];
+    free(outputs);
+    return out;
 }
 
 void NeuralNetwork::UpdateValues(double *input, double *expected)
 {
     //#region Eval
-    double **outputs = (double **) malloc(sizeof(double*)*settings.NumberOfLayers);
+    double **outputs = (double **) malloc(sizeof(double *)*settings.NumberOfLayers);
+    double **layersWeightedInputs = (double **) malloc(sizeof(double *)*settings.NumberOfLayers);
     outputs[0] = input;
     for(int i = 1; i < settings.NumberOfLayers; i++)
     {
-        outputs[i] = Layers[i]->EvalOutput(outputs[i-1]);
+        layersWeightedInputs[i] = (double *) malloc(sizeof(double)*settings.Layers[i]);
+        outputs[i] = Layers[i]->EvalOutput(outputs[i-1], layersWeightedInputs[i]);
     }
     //#endregion
 
     int lastLayer = settings.NumberOfLayers - 1;
-    double *derivativeOutputNodeValues = Layers[lastLayer]->DerivativeNodeValues(expected, outputs[lastLayer]);
+    double *derivativeOutputNodeValues = Layers[lastLayer]->DerivativeNodeValues(expected, outputs[lastLayer], layersWeightedInputs[lastLayer]);
     Layers[lastLayer]->UpdateDerivatives(derivativeOutputNodeValues, outputs[lastLayer - 1]);
     double *derivativeValues = derivativeOutputNodeValues;
     for(int i = lastLayer - 1; i >= 1; i--)
     {
-        derivativeValues = Layers[i]->HiddenLayerDerivativeNodeValues(Layers[i + 1]->GetNodes(), derivativeValues, settings.Layers[i + 1]);
+        derivativeValues = Layers[i]->HiddenLayerDerivativeNodeValues(Layers[i + 1]->GetNodes(), derivativeValues, settings.Layers[i + 1], layersWeightedInputs[i]);
         Layers[i]->UpdateDerivatives(derivativeValues, outputs[i - 1]);
     }
-    for(int i = 0; i < settings.NumberOfLayers; i++)
+    for(int i = 1; i < settings.NumberOfLayers; i++)
     {
+        free(layersWeightedInputs[i]);
         free(outputs[i]);
     }
+    free(outputs);
+    free(layersWeightedInputs);
 }
 
 
