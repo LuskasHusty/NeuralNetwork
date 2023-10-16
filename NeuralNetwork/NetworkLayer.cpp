@@ -42,14 +42,14 @@ NetworkLayer::NetworkLayer(int Inputs, int Outputs, Functions Activation, Functi
 
 NetworkLayer::~NetworkLayer()
 {
-    free(nodes);
-
     for(int i = 0; i < numOutputs; i++)
     {
         free(wVels[i]);
         free(errorDerivativesG[i]);
         free(nodes[i].Weight);
     }
+
+    free(nodes);
 
     free(wVels);
     free(bVels);
